@@ -13,12 +13,8 @@ APOD Automator, NASA'nın *Astronomy Picture of the Day* (APOD) API'sini kullana
 ## Kurulum
 ```bash
 pip install -r requirements.txt
-cp .env.example .env   # Ortam değişkenlerini doldur
-python src/main.py
+python main.py
 ```
-
-## Katkı
-Katkıda bulunmak isterseniz lütfen [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını inceleyin.
 
 ## Lisans
 MIT — detaylar için [LICENSE](LICENSE) dosyasına bakın.
