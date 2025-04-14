@@ -83,13 +83,6 @@ MIT Lisansı — detaylar için [LICENSE](LICENSE) dosyasına göz atabilirsin.
 
 ---
 
-## 🙌 Katkı Sağla
-
-Katkıda bulunmak istersen [CONTRIBUTING.md](CONTRIBUTING.md) dosyasına göz atabilirsin.  
-Pull Request'ler, hata bildirimleri ve öneriler her zaman açıktır.
-
----
-
 ## 🤖 Not
 
 Bu proje, [ChatGPT](https://openai.com/chatgpt) yardımıyla planlandı ve geliştirildi.  
