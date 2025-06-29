@@ -1,5 +1,7 @@
 # 🚀 APOD Automator
 
+_For an English version, see [README_EN.md](README_EN.md)._
+
 **APOD Automator**, NASA'nın _Astronomy Picture of the Day_ (APOD) API'sini kullanarak günlük görseli indirir, optimize eder ve çeşitli yöntemlerle paylaşır:
 
 - 💌 E‑posta
