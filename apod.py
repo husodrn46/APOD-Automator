@@ -7,13 +7,13 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 import mimetypes
 
+logger = logging.getLogger(__name__)
+
 try:
     import config as settings
 except ImportError:
-    logging.error("config.py bulunamadı. Varsayılan ayarlar kullanılıyor.")
+    logger.error("config.py bulunamadı. Varsayılan ayarlar kullanılıyor.")
     settings = type('obj', (object,), {'API_KEY': 'DEMO_KEY', 'SAVE_DIR': 'images'})()
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def sanitize_filename(filename: str) -> str:
@@ -49,7 +49,7 @@ def get_image_extension(url: str, response_headers: Dict[str, str]) -> str:
     except Exception:
         pass
 
-    logging.warning(f"Dosya uzantısı belirlenemedi, varsayılan '.jpg' kullanılıyor. URL: {url}")
+    logger.warning(f"Dosya uzantısı belirlenemedi, varsayılan '.jpg' kullanılıyor. URL: {url}")
     return ".jpg"
 
 
@@ -58,19 +58,19 @@ def fetch_apod() -> Optional[Dict[str, Any]]:
     NASA APOD API'sinden günlük veriyi döner.
     """
     if not settings.API_KEY or settings.API_KEY == 'DEMO_KEY':
-        logging.warning("NASA API_KEY ayarlanmadı veya DEMO_KEY kullanılıyor.")
+        logger.warning("NASA API_KEY ayarlanmadı veya DEMO_KEY kullanılıyor.")
 
     url = f"https://api.nasa.gov/planetary/apod?api_key={settings.API_KEY}"
     try:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
-        logging.info("APOD verisi alındı.")
+        logger.info("APOD verisi alındı.")
         return response.json()
     except requests.RequestException as e:
-        logging.error(f"APOD API hatası: {e}")
+        logger.error(f"APOD API hatası: {e}")
         return None
     except Exception as e:
-        logging.error(f"Beklenmedik hata: {e}")
+        logger.error(f"Beklenmedik hata: {e}")
         return None
 
 
@@ -79,17 +79,17 @@ def save_image(data: Dict[str, Any]) -> Optional[str]:
     APOD verisinden görseli indirip kaydeder.
     """
     if not data:
-        logging.error("APOD verisi boş.")
+        logger.error("APOD verisi boş.")
         return None
 
     image_url = data.get("hdurl") or data.get("url")
     if not image_url:
-        logging.error("Geçerli görsel URL'si bulunamadı.")
+        logger.error("Geçerli görsel URL'si bulunamadı.")
         return None
 
     title = data.get("title", "apod_image")
     try:
-        logging.info(f"Görsel indiriliyor: {image_url}")
+        logger.info(f"Görsel indiriliyor: {image_url}")
         image_response = requests.get(image_url, timeout=60)
         image_response.raise_for_status()
         date_str = data.get("date", datetime.now().strftime("%Y-%m-%d"))
@@ -100,27 +100,27 @@ def save_image(data: Dict[str, Any]) -> Optional[str]:
         save_dir = Path(settings.SAVE_DIR)
         save_dir.mkdir(parents=True, exist_ok=True)
         file_path = save_dir / file_name
-        logging.info(f"Görsel kaydediliyor: {file_path}")
+        logger.info(f"Görsel kaydediliyor: {file_path}")
         with open(file_path, "wb") as file:
             file.write(image_response.content)
-        logging.info("Görsel başarılı kaydedildi.")
+        logger.info("Görsel başarılı kaydedildi.")
         return str(file_path)
     except requests.RequestException as e:
-        logging.error(f"Görsel indirirken hata: {e}")
+        logger.error(f"Görsel indirirken hata: {e}")
         return None
     except IOError as e:
-        logging.error(f"Dosya yazma hatası ({file_path}): {e}")
+        logger.error(f"Dosya yazma hatası ({file_path}): {e}")
         return None
     except Exception as e:
-        logging.error(f"Beklenmedik hata: {e}")
+        logger.error(f"Beklenmedik hata: {e}")
         return None
 
 
 if __name__ == "__main__":
-    logging.info("NASA APOD İndirici Başlatıldı...")
+    logger.info("NASA APOD İndirici Başlatıldı...")
     apod_data = fetch_apod()
     if apod_data:
-        logging.info(f"Başlık: {apod_data.get('title', 'N/A')}")
+        logger.info(f"Başlık: {apod_data.get('title', 'N/A')}")
         if apod_data.get("media_type") == "image":
             saved_path = save_image(apod_data)
             if saved_path:

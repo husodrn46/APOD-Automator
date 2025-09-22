@@ -7,10 +7,12 @@ from email.mime.image import MIMEImage
 from typing import Optional, List, Union
 import socket
 
+logger = logging.getLogger(__name__)
+
 try:
     import config as settings
 except ImportError:
-    logging.error("config.py bulunamadı. Varsayılan ayarlar kullanılıyor.")
+    logger.error("config.py bulunamadı. Varsayılan ayarlar kullanılıyor.")
     settings = type('obj', (object,), {
         'EMAIL_FROM': 'default@example.com',
         'EMAIL_TO': 'recipient@example.com',
@@ -18,8 +20,6 @@ except ImportError:
         'SMTP_SERVER': 'smtp.example.com',
         'SMTP_PORT': 587
     })()
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def send_email_with_image(
@@ -44,7 +44,7 @@ def send_email_with_image(
         recipient_list = [actual_recipient]
 
     if not os.path.exists(image_path) or not os.path.isfile(image_path):
-        logging.error(f"Görsel dosyası bulunamadı: {image_path}")
+        logger.error(f"Görsel dosyası bulunamadı: {image_path}")
         return False
 
     msg = MIMEMultipart()
@@ -59,7 +59,7 @@ def send_email_with_image(
             img.add_header('Content-Disposition', 'attachment', filename=os.path.basename(image_path))
             msg.attach(img)
     except Exception as e:
-        logging.error(f"Görsel eklenecek dosya okunamadı: {e}")
+        logger.error(f"Görsel eklenecek dosya okunamadı: {e}")
         return False
 
     try:
@@ -69,15 +69,15 @@ def send_email_with_image(
             server.ehlo()
             server.login(actual_sender, smtp_password)
             server.sendmail(actual_sender, recipient_list, msg.as_string())
-            logging.info(f"E-posta gönderildi: {recipient_header}")
+            logger.info(f"E-posta gönderildi: {recipient_header}")
             return True
     except (smtplib.SMTPAuthenticationError, smtplib.SMTPConnectError,
             smtplib.SMTPSenderRefused, smtplib.SMTPRecipientsRefused,
             smtplib.SMTPDataError, socket.gaierror, TimeoutError) as e:
-        logging.error(f"SMTP hatası: {e}")
+        logger.error(f"SMTP hatası: {e}")
         return False
     except Exception as e:
-        logging.error(f"E-posta gönderiminde beklenmedik hata: {e}")
+        logger.error(f"E-posta gönderiminde beklenmedik hata: {e}")
         return False
 
 

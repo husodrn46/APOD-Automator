@@ -3,14 +3,14 @@ import logging
 from pathlib import Path
 from typing import Tuple, Optional
 
+logger = logging.getLogger(__name__)
+
 try:
     from PIL import Image, UnidentifiedImageError
 except ImportError:
-    logging.error("Pillow kütüphanesi yüklenemedi. Lütfen 'pip install Pillow' komutunu çalıştırın.")
+    logger.error("Pillow kütüphanesi yüklenemedi. Lütfen 'pip install Pillow' komutunu çalıştırın.")
     Image = None
     UnidentifiedImageError = None
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 DEFAULT_MAX_SIZE = (1920, 1080)
 DEFAULT_QUALITY = 85
@@ -27,19 +27,19 @@ def optimize_image(
     Verilen görseli yeniden boyutlandırır ve optimize edilmiş halini kaydeder.
     """
     if Image is None:
-        logging.error("Pillow yüklü değil.")
+        logger.error("Pillow yüklü değil.")
         return None
 
     input_path = Path(image_path)
     if not input_path.is_file():
-        logging.error(f"Dosya bulunamadı: {image_path}")
+        logger.error(f"Dosya bulunamadı: {image_path}")
         return None
 
     output_path_dir = Path(output_dir) if output_dir else input_path.parent
     try:
         output_path_dir.mkdir(parents=True, exist_ok=True)
     except OSError as e:
-        logging.error(f"Çıktı dizini oluşturulamadı: {e}")
+        logger.error(f"Çıktı dizini oluşturulamadı: {e}")
         return None
 
     output_filename_base = f"{input_path.stem}{suffix}"
@@ -47,11 +47,11 @@ def optimize_image(
     output_path = output_path_dir / f"{output_filename_base}{output_extension}"
 
     try:
-        logging.info(f"Optimizasyon: {input_path.name} -> {output_path.name}")
+        logger.info(f"Optimizasyon: {input_path.name} -> {output_path.name}")
         with Image.open(input_path) as img:
             original_size = img.size
             img.thumbnail(max_size, Image.Resampling.LANCZOS)
-            logging.info(f"Boyut {original_size} -> {img.size}")
+            logger.info(f"Boyut {original_size} -> {img.size}")
             save_options = {"optimize": True}
             save_format = output_format.upper()
 
@@ -70,13 +70,13 @@ def optimize_image(
                 img_to_save = img
 
             img_to_save.save(output_path, format=save_format, **save_options)
-            logging.info(f"Optimizasyon tamam: {output_path}")
+            logger.info(f"Optimizasyon tamam: {output_path}")
             return str(output_path)
     except (FileNotFoundError, UnidentifiedImageError) as e:
-        logging.error(f"Optimizasyon hatası: {e}")
+        logger.error(f"Optimizasyon hatası: {e}")
         return None
     except Exception as e:
-        logging.error(f"Beklenmedik hata: {e}", exc_info=True)
+        logger.error(f"Beklenmedik hata: {e}", exc_info=True)
         return None
 
 if __name__ == "__main__":

@@ -4,10 +4,12 @@ from flask import Flask, send_from_directory, render_template_string, abort, url
 from pathlib import Path
 from werkzeug.exceptions import NotFound
 
+logger = logging.getLogger(__name__)
+
 try:
     import config as settings
 except ImportError:
-    logging.error("config.py bulunamadı. Varsayılan ayarlar kullanılıyor.")
+    logger.error("config.py bulunamadı. Varsayılan ayarlar kullanılıyor.")
     settings = type('obj', (object,), {
         'SAVE_DIR': 'saved_images',
         'FLASK_HOST': '0.0.0.0',
@@ -15,12 +17,10 @@ except ImportError:
         'FLASK_DEBUG': True
     })()
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 app = Flask(__name__)
 IMAGE_DIR = Path(settings.SAVE_DIR).resolve()
 if not IMAGE_DIR.is_dir():
-    logging.warning(f"Görsel dizini bulunamadı: {IMAGE_DIR}")
+    logger.warning(f"Görsel dizini bulunamadı: {IMAGE_DIR}")
 
 INDEX_HTML = """
 <!doctype html>
@@ -63,7 +63,7 @@ def serve_image(filename: str):
     try:
         return send_from_directory(IMAGE_DIR, filename)
     except NotFound:
-        logging.warning(f"Dosya bulunamadı: {filename}")
+        logger.warning(f"Dosya bulunamadı: {filename}")
         abort(404, description="Kaynak bulunamadı.")
 
 @app.route('/')
@@ -72,7 +72,7 @@ def index():
     if IMAGE_DIR.is_dir():
         allowed = {".jpg", ".jpeg", ".png", ".gif"}
         image_files = sorted([f.name for f in IMAGE_DIR.iterdir() if f.is_file() and f.suffix.lower() in allowed])
-        logging.info(f"{len(image_files)} görsel bulundu.")
+        logger.info(f"{len(image_files)} görsel bulundu.")
     return render_template_string(INDEX_HTML, images=image_files)
 
 @app.errorhandler(404)
@@ -91,5 +91,5 @@ if __name__ == "__main__":
     host = settings.FLASK_HOST
     port = settings.FLASK_PORT
     debug_mode = settings.FLASK_DEBUG
-    logging.info(f"Flask sunucusu başlatılıyor: http://{host}:{port}")
+    logger.info(f"Flask sunucusu başlatılıyor: http://{host}:{port}")
     app.run(host=host, port=port, debug=debug_mode)
