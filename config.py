@@ -23,16 +23,6 @@ SMB_PASSWORD = os.environ.get("SMB_PASSWORD")
 SMB_PATH = os.environ.get("SMB_PATH")
 SMB_MOUNT_POINT = os.environ.get("SMB_MOUNT_POINT", "/mnt/windows_share")
 
-# E-posta Ayarları
-SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-try:
-    SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
-except ValueError:
-    SMTP_PORT = 587
-EMAIL_FROM = os.environ.get("EMAIL_FROM")
-EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
-EMAIL_TO = os.environ.get("EMAIL_TO")
-
 # Flask Ayarları
 FLASK_HOST = os.environ.get("FLASK_HOST", "127.0.0.1")
 try:
@@ -46,8 +36,7 @@ DELETE_ORIGINAL_AFTER_PROCESSING = os.environ.get("DELETE_ORIGINAL_AFTER_PROCESS
 
 # Kritik değişkenlerin kontrolü (opsiyonel)
 REQUIRED_VARS = [
-    "NASA_API_KEY", "PUSHOVER_USER_KEY", "PUSHOVER_APP_TOKEN",
-    "EMAIL_FROM", "EMAIL_PASSWORD", "EMAIL_TO"
+    "NASA_API_KEY", "PUSHOVER_USER_KEY", "PUSHOVER_APP_TOKEN"
 ]
 missing_vars = [var for var in REQUIRED_VARS if not globals().get(var)]
 if missing_vars:

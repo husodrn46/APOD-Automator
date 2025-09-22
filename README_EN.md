@@ -2,7 +2,6 @@
 
 **APOD Automator** downloads the daily image from NASA's _Astronomy Picture of the Day_ (APOD) API, optimizes it, and shares it in multiple ways:
 
-- 💌 Email
 - 📱 Pushover notification
 - 📁 SMB shared folder
 - 🌐 Serve via Flask web interface
@@ -16,7 +15,7 @@
 - ✅ Optimizes them by resizing and compressing
 - ✅ Automatically copies to an SMB share
 - ✅ Offers a Flask web interface to view images in the browser
-- ✅ Sends notifications via Email and Pushover
+- ✅ Sends notifications via Pushover
 
 ---
 
@@ -65,15 +64,14 @@ See `.env.example` for a template.
 | Variable | Description |
 |----------|-------------|
 | `NASA_API_KEY` | Your NASA Developer API key |
-| `EMAIL_FROM`, `EMAIL_TO` | Sender and recipient email addresses |
-| `EMAIL_PASSWORD` | Password for the sender address |
-| `SMTP_SERVER`, `SMTP_PORT` | SMTP server configuration |
 | `PUSHOVER_USER_KEY`, `PUSHOVER_APP_TOKEN` | Pushover API details |
 | `SMB_PATH`, `SMB_USER`, `SMB_PASSWORD` | Credentials for the SMB share |
 | `SMB_MOUNT_POINT` | Mount point on a Raspberry Pi |
 | `SAVE_DIR` | Directory to save images |
 | `LOG_LEVEL` | Application log level (e.g. INFO) |
 | `DELETE_ORIGINAL_AFTER_PROCESSING` | Delete the original file after processing? (True/False)
+
+> ℹ️ The email delivery feature has been removed; the application no longer opens SMTP connections.
 
 ---
 

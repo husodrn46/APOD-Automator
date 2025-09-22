@@ -4,7 +4,6 @@ _For an English version, see [README_EN.md](README_EN.md)._
 
 **APOD Automator**, NASA'nın _Astronomy Picture of the Day_ (APOD) API'sini kullanarak günlük görseli indirir, optimize eder ve çeşitli yöntemlerle paylaşır:
 
-- 💌 E‑posta
 - 📱 Pushover bildirimi
 - 📁 SMB paylaşımlı klasör
 - 🌐 Flask ile web üzerinden yayın
@@ -18,7 +17,7 @@ _For an English version, see [README_EN.md](README_EN.md)._
 - ✅ Yeniden boyutlandırma ve sıkıştırma ile optimizasyon  
 - ✅ SMB paylaşımına otomatik kopyalama  
 - ✅ Flask web arayüzü ile görsellerin tarayıcıda görüntülenmesi  
-- ✅ E‑posta ve Pushover ile bildirim gönderimi
+- ✅ Pushover ile bildirim gönderimi
 
 ---
 
@@ -67,15 +66,14 @@ Projeyi çalıştırmak için aşağıdaki ortam değişkenlerini `.env` dosyas�
 | Değişken | Açıklama |
 |----------|----------|
 | `NASA_API_KEY` | NASA Developer API anahtarın |
-| `EMAIL_FROM`, `EMAIL_TO` | E‑posta gönderici ve alıcı adresleri |
-| `EMAIL_PASSWORD` | Gönderici e‑posta şifresi |
-| `SMTP_SERVER`, `SMTP_PORT` | SMTP sunucu ayarları |
 | `PUSHOVER_USER_KEY`, `PUSHOVER_APP_TOKEN` | Pushover API bilgileri |
 | `SMB_PATH`, `SMB_USER`, `SMB_PASSWORD` | SMB paylaşımı için bilgiler |
 | `SMB_MOUNT_POINT` | Raspberry Pi'de mount edilen yol |
 | `SAVE_DIR` | Görsellerin kaydedileceği klasör |
 | `LOG_LEVEL` | Uygulama log seviyesi (örn: INFO) |
 | `DELETE_ORIGINAL_AFTER_PROCESSING` | Orijinal dosya silinsin mi? (True/False)
+
+> ℹ️ E-posta ile bildirim özelliği kaldırılmıştır; uygulama SMTP bağlantısı kurmaz.
 
 ---
 

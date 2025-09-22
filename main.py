@@ -7,7 +7,6 @@ try:
     import apod
     from image_optimizer import optimize_image
     from image_saver import save_to_smb
-    from email_sender import send_email_with_image
     import pushover
 except ImportError as e:
     logging.basicConfig(level=logging.ERROR)
@@ -71,16 +70,7 @@ def main():
     except Exception as e:
         logging.error(f"Pushover bildirimi hatası: {e}", exc_info=True)
 
-    logging.info("6. E-posta gönderiliyor...")
-    email_success = send_email_with_image(
-        image_path=optimized_image_path,
-        subject=f"Günün NASA Fotoğrafı: {apod_title}",
-        body=apod_data.get('explanation', 'Açıklama mevcut değil.')
-    )
-    if email_success:
-        logging.info("E-posta gönderildi.")
-    else:
-        logging.warning("E-posta gönderimi başarısız.")
+    logging.info("6. E-posta gönderimi atlandı (SMTP bağlantısı devre dışı).")
 
     if settings.DELETE_ORIGINAL_AFTER_PROCESSING and os.path.exists(original_image_path):
         try:
