@@ -2,10 +2,59 @@ import os
 import logging
 import sys
 
+
+def _parse_log_level(level_value):
+    """Convert different LOG_LEVEL representations into logging levels."""
+    if isinstance(level_value, int):
+        return level_value
+
+    if isinstance(level_value, str):
+        candidate = level_value.strip()
+        if candidate.isdigit():
+            return int(candidate)
+
+        resolved = logging.getLevelName(candidate.upper())
+        if isinstance(resolved, int):
+            return resolved
+
+    return None
+
+
+_raw_log_level = os.environ.get("LOG_LEVEL", "INFO")
+_log_format = '%(asctime)s - %(levelname)s - [%(module)s.%(funcName)s] - %(message)s'
+_parsed_level = _parse_log_level(_raw_log_level)
+_invalid_env_level = _parsed_level is None
+
+if _invalid_env_level:
+    _parsed_level = logging.INFO
+
+if not logging.getLogger().handlers:
+    logging.basicConfig(level=_parsed_level, format=_log_format)
+
 logger = logging.getLogger(__name__)
+
+if _invalid_env_level:
+    logger.warning(
+        f"Geçersiz LOG_LEVEL değeri '{_raw_log_level}'. Varsayılan INFO seviyesi kullanılacak."
+    )
 
 try:
     import config as settings
+except ImportError as e:
+    logger.error(f"config.py yüklenemedi: {e}. Bağımlılıkları kontrol edin.")
+    sys.exit(1)
+
+_settings_log_level = getattr(settings, "LOG_LEVEL", "INFO")
+_settings_level = _parse_log_level(_settings_log_level)
+if _settings_level is None:
+    logger.warning(
+        f"config.LOG_LEVEL değeri '{_settings_log_level}' geçersiz. INFO kullanılacak."
+    )
+    _settings_level = logging.INFO
+
+logging.getLogger().setLevel(_settings_level)
+
+try:
     import apod
     from image_optimizer import optimize_image
     from image_saver import save_to_smb
@@ -15,9 +64,6 @@ except ImportError as e:
     logger.error(f"Gerekli modül bulunamadı: {e}. Bağımlılıkları kontrol edin.")
     sys.exit(1)
 
-log_level = getattr(logging, settings.LOG_LEVEL, logging.INFO)
-log_format = '%(asctime)s - %(levelname)s - [%(module)s.%(funcName)s] - %(message)s'
-logging.basicConfig(level=log_level, format=log_format)
 logger.info("="*20 + " İşlem Başlatıldı " + "="*20)
 
 

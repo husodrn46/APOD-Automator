@@ -7,8 +7,10 @@ logger = logging.getLogger(__name__)
 
 try:
     from PIL import Image, UnidentifiedImageError
-except ImportError:
-    logger.error("Pillow kütüphanesi yüklenemedi. Lütfen 'pip install Pillow' komutunu çalıştırın.")
+except ImportError as e:
+    logger.error(
+        f"Pillow kütüphanesi yüklenemedi ({e}). Lütfen 'pip install Pillow' komutunu çalıştırın."
+    )
     Image = None
     UnidentifiedImageError = None
 

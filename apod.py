@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 try:
     import config as settings
-except ImportError:
-    logger.error("config.py bulunamadı. Varsayılan ayarlar kullanılıyor.")
+except ImportError as e:
+    logger.error(f"config.py bulunamadı ({e}). Varsayılan ayarlar kullanılıyor.")
     settings = type('obj', (object,), {'API_KEY': 'DEMO_KEY', 'SAVE_DIR': 'images'})()
 
 
